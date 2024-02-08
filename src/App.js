@@ -1,24 +1,36 @@
-import logo from './logo.svg';
+import {BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
+import Auth from './pages/Authentication/Auth';
+import HomePage from './pages/HomePage/HomePage';
+import Messages from './pages/Messages/Messages';
+import { useDispatch, useSelector } from 'react-redux';
+import { store } from './redux/store';
+import { useEffect } from 'react';
+import { getProfileAction } from './redux/User/user.action';
 
 function App() {
+
+  const dispatch = useDispatch();
+
+  const jwt = localStorage.getItem("jwt");
+  const {user} = useSelector(store => store);
+
+  useEffect(() => {
+    dispatch(getProfileAction(jwt));
+
+  },[jwt])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+   <div>
+      <Router>
+        <Routes>
+          <Route path='/' element={user.user ? <HomePage /> : <Auth />}/>
+          <Route path='/' element={<HomePage />}/>
+          <Route path='/message' element={<Messages />}/>
+          {/* <Route path='/*' element={<Auth />}/> */}
+        </Routes>
+      </Router>
+   </div>
   );
 }
 
